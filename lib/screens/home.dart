@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../env.sample.dart';
+import '../env.dart';
 import '../models/student.dart';
 import './details.dart';
 import './create.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  Home({Key? key}) : super(key: key);
   @override
   HomeState createState() => HomeState();
 }
 
 class HomeState extends State<Home> {
-  Future<List<Student>> students;
+  late Future<List<Student>> students;
   final studentListKey = GlobalKey<HomeState>();
 
   @override
@@ -24,11 +24,10 @@ class HomeState extends State<Home> {
   }
 
   Future<List<Student>> getStudentList() async {
-    print(http.get(Uri.parse("${Env.URL_PREFIX}/list.php")));
-    final response = await http.get(Uri.parse("${Env.URL_PREFIX}/list.php"));
-    
-    print(response.statusCode);
+    final response = await http.get(Uri.http(kUrl, "/", {"route": "list"}));
+    print(response);
     final items = json.decode(response.body).cast<Map<String, dynamic>>();
+    print(items);
     List<Student> students = items.map<Student>((json) {
       return Student.fromJson(json);
     }).toList();
@@ -41,7 +40,7 @@ class HomeState extends State<Home> {
     return Scaffold(
       key: studentListKey,
       appBar: AppBar(
-        title: Text('Student List'),
+        title: Text('학생 목록'),
       ),
       body: Center(
         child: FutureBuilder<List<Student>>(
@@ -64,8 +63,9 @@ class HomeState extends State<Home> {
                     ),
                     onTap: () {
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Details(student: data)),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Details(student: data)),
                       );
                     },
                   ),
@@ -79,7 +79,7 @@ class HomeState extends State<Home> {
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
-          return Create();
+            return Create();
           }));
         },
       ),

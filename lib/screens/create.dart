@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../env.sample.dart';
+import '../env.dart';
 import '../widgets/form.dart';
 
 class Create extends StatefulWidget {
-  final Function refreshStudentList;
+  final Function? refreshStudentList;
 
   Create({this.refreshStudentList});
 
@@ -24,7 +24,7 @@ class _CreateState extends State<Create> {
   // Http post request to create new data
   Future _createStudent() async {
     return await http.post(
-      Uri.parse("${Env.URL_PREFIX}/create.php"),
+      Uri.parse(kUrl + "/flutter_api/create"),
       body: {
         "name": nameController.text,
         "age": ageController.text,
@@ -34,7 +34,6 @@ class _CreateState extends State<Create> {
 
   void _onConfirm(context) async {
     await _createStudent();
-
     // Remove all existing routes until the Home.dart, then rebuild Home.
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
@@ -44,15 +43,15 @@ class _CreateState extends State<Create> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create"),
+        title: Text("학생 추가"),
       ),
       bottomNavigationBar: BottomAppBar(
         child: RaisedButton(
-          child: Text("CONFIRM"),
+          child: Text("확인"),
           color: Colors.blue,
           textColor: Colors.white,
           onPressed: () {
-            if (formKey.currentState.validate()) {
+            if (formKey.currentState!.validate()) {
               _onConfirm(context);
             }
           },

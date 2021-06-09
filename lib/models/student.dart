@@ -3,7 +3,7 @@ class Student {
   final String name;
   final int age;
 
-  Student({this.id, this.name, this.age});
+  Student({required this.id, required this.name, required this.age});
 
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(

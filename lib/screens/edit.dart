@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
 
-import '../env.sample.dart';
+import '../env.dart';
 import '../models/student.dart';
 import '../widgets/form.dart';
 
 class Edit extends StatefulWidget {
-  final Student student;
+  final Student? student;
 
   Edit({this.student});
 
@@ -20,15 +19,15 @@ class _EditState extends State<Edit> {
   final formKey = GlobalKey<FormState>();
 
   // This is for text onChange
-  TextEditingController nameController;
-  TextEditingController ageController;
+  late TextEditingController nameController;
+  late TextEditingController ageController;
 
   // Http post request
   Future editStudent() async {
     return await http.post(
-      Uri.parse("${Env.URL_PREFIX}/update.php"),
+      Uri.http(kUrl, "/flutter_api/update.php"),
       body: {
-        "id": widget.student.id.toString(),
+        "id": widget.student?.id.toString(),
         "name": nameController.text,
         "age": ageController.text
       },
@@ -37,12 +36,15 @@ class _EditState extends State<Edit> {
 
   void _onConfirm(context) async {
     await editStudent();
+    // Remove all existing routes until the Home.dart, then rebuild Home.
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
   @override
   void initState() {
-    nameController = TextEditingController(text: widget.student.name);
-    ageController = TextEditingController(text: widget.student.age.toString());
+    nameController = TextEditingController(text: widget.student?.name);
+    ageController = TextEditingController(text: widget.student?.age.toString());
     super.initState();
   }
 
@@ -50,11 +52,11 @@ class _EditState extends State<Edit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit"),
+        title: Text("수정하기"),
       ),
       bottomNavigationBar: BottomAppBar(
         child: RaisedButton(
-          child: Text('CONFIRM'),
+          child: Text('확인'),
           color: Colors.blue,
           textColor: Colors.white,
           onPressed: () {

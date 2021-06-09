@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
-import '../env.sample.dart';
+
+import '../env.dart';
 import '../models/student.dart';
 import './edit.dart';
 
 class Details extends StatefulWidget {
-  final Student student;
+  final Student? student;
 
   Details({this.student});
 
@@ -17,9 +17,9 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   void deleteStudent(context) async {
     await http.post(
-    Uri.parse("${Env.URL_PREFIX}/delete.php"),
+      Uri.http(kUrl, "/flutter_api/delete.php"),
       body: {
-        'id': widget.student.id.toString(),
+        'id': widget.student?.id.toString(),
       },
     );
     // Navigator.pop(context);
@@ -56,7 +56,7 @@ class _DetailsState extends State<Details> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Details'),
+        title: Text('자세히 보기'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.delete),
@@ -71,14 +71,14 @@ class _DetailsState extends State<Details> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Name : ${widget.student.name}",
+              "이름 : ${widget.student?.name}",
               style: TextStyle(fontSize: 20),
             ),
             Padding(
               padding: EdgeInsets.all(10),
             ),
             Text(
-              "Age : ${widget.student.age}",
+              "나이 : ${widget.student?.age}",
               style: TextStyle(fontSize: 20),
             ),
           ],
