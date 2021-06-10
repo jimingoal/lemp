@@ -1,8 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:lemp/env.dart';
 
-import '../env.dart';
 import '../models/student.dart';
 import './details.dart';
 import './create.dart';
@@ -20,18 +21,44 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    students = getStudentList();
+    students = getStudentList().whenComplete(() {
+      setState(() {});
+    });
   }
 
-  Future<List<Student>> getStudentList() async {
-    final response = await http.get(Uri.http(kUrl, "/", {"route": "list"}));
-    print(response);
-    final items = json.decode(response.body).cast<Map<String, dynamic>>();
-    print(items);
-    List<Student> students = items.map<Student>((json) {
-      return Student.fromJson(json);
-    }).toList();
+  // Future<List<Student>> getStudentList() async {
+  //   try {
+  //     final response =
+  //         await http.get(Uri.http('172.19.0.1', "/", {"route": "user.list"}));
+  //     print(response.body);
+  //     final items = json.decode(response.body).cast<Map<String, dynamic>>();
+  //     print(items);
+  //     List<Student> students = items.map<Student>((json) {
+  //       return Student.fromJson(json);
+  //     }).toList();
 
+  //     return students;
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+
+  //   return students;
+  // }
+
+  Future<List<Student>> getStudentList() async {
+    print('getStudentList()');
+    try {
+      Response response = await Dio().get(
+        kUrl,
+        queryParameters: {'route': 'user.list'},
+      );
+      List<Student> students = response.data.map<Student>((json) {
+        return Student.fromJson(json);
+      }).toList();
+      return students;
+    } on DioError catch (e) {
+      print('getStudentList e: ${e.message}');
+    }
     return students;
   }
 

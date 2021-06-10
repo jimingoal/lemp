@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,10 +25,21 @@ class _CreateState extends State<Create> {
   TextEditingController ageController = new TextEditingController();
 
   // Http post request to create new data
+  // Future _createStudent() async {
+  //   return await http.post(
+  //     Uri.parse(kUrl + "/flutter_api/create"),
+  //     body: {
+  //       "name": nameController.text,
+  //       "age": ageController.text,
+  //     },
+  //   );
+  // }
+
   Future _createStudent() async {
-    return await http.post(
-      Uri.parse(kUrl + "/flutter_api/create"),
-      body: {
+    return await Dio().post(
+      kUrl,
+      queryParameters: {'route': 'user.create'},
+      data: {
         "name": nameController.text,
         "age": ageController.text,
       },
