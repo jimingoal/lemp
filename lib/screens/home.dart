@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:lemp/env.dart';
 
@@ -52,6 +51,7 @@ class HomeState extends State<Home> {
         kUrl,
         queryParameters: {'route': 'user.list'},
       );
+      print('response.data: ${response.data}');
       List<Student> students = response.data.map<Student>((json) {
         return Student.fromJson(json);
       }).toList();
